@@ -28,13 +28,40 @@ class UserOut(UserBase):
     class Config:
         from_attributes = True
 
+class UserMeOut(UserOut):
+    companies: List["CompanyOut"] = []
+
 # Companies
 class CompanyBase(BaseModel):
     name: str
     description: Optional[str] = None
+    logo_url: Optional[str] = None
+    cover_url: Optional[str] = None
+    nuit: Optional[str] = None
+    nationality: Optional[str] = None
+    province: Optional[str] = None
+    district: Optional[str] = None
+    address: Optional[str] = None
+    website: Optional[str] = None
+    email: Optional[str] = None
+    whatsapp: Optional[str] = None
 
 class CompanyCreate(CompanyBase):
     pass
+
+class CompanyUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    logo_url: Optional[str] = None
+    cover_url: Optional[str] = None
+    nuit: Optional[str] = None
+    nationality: Optional[str] = None
+    province: Optional[str] = None
+    district: Optional[str] = None
+    address: Optional[str] = None
+    website: Optional[str] = None
+    email: Optional[str] = None
+    whatsapp: Optional[str] = None
 
 class CompanyOut(CompanyBase):
     id: int
