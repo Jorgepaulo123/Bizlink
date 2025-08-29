@@ -6,6 +6,7 @@ from .routers import auth as auth_router
 from .routers import users as users_router
 from .routers import companies as companies_router
 from .routers import services as services_router
+from .routers import credits as credits_router
 from .routers import files as files_router
 from fastapi.staticfiles import StaticFiles
 from .settings import settings
@@ -35,6 +36,7 @@ app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
 app.include_router(users_router.router, prefix="/users", tags=["users"])
 app.include_router(companies_router.router, prefix="/companies", tags=["companies"])
 app.include_router(services_router.router, prefix="/services", tags=["services"])
+app.include_router(credits_router.router, prefix="/credits", tags=["credits"])
 app.include_router(files_router.router, prefix="/files", tags=["files"])
 
 # Static uploads

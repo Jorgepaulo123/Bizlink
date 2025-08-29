@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List
+from datetime import datetime
 
 # Auth
 class Token(BaseModel):
@@ -69,6 +70,39 @@ class CompanyOut(CompanyBase):
 
     class Config:
         from_attributes = True
+
+# Credit System
+class CompanyCreditBase(BaseModel):
+    balance: float
+    total_earned: float
+    total_spent: float
+
+class CompanyCreditOut(CompanyCreditBase):
+    id: int
+    company_id: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class CreditTransactionBase(BaseModel):
+    type: str  # 'earn', 'spend', 'bonus', 'deduction'
+    amount: float
+    description: Optional[str] = None
+
+class CreditTransactionOut(CreditTransactionBase):
+    id: int
+    company_credit_id: int
+    balance_before: float
+    balance_after: float
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class CreditTransactionCreate(CreditTransactionBase):
+    pass
 
 # Services
 class ServiceBase(BaseModel):

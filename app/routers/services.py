@@ -206,3 +206,97 @@ async def delete_service(service_id: int, db: Session = Depends(get_db), current
     db.delete(service)
     db.commit()
     return {"ok": True}
+
+@router.patch("/{service_id}/promote", response_model=ServiceOut)
+async def toggle_service_promotion(
+    service_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Promove ou despromove um serviço (toggle do campo is_promoted)"""
+    service = db.get(Service, service_id)
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+    
+    # Verificar se o usuário é dono da empresa
+    company = db.get(Company, service.company_id)
+    if not company or company.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not allowed")
+    
+    # Verificar créditos se estiver promovendo
+    if not service.is_promoted:
+        # Buscar crédito da empresa
+        from ..models import CompanyCredit
+        credit = db.query(CompanyCredit).filter(CompanyCredit.company_id == company.id).first()
+        
+        if not credit:
+            # Criar crédito inicial se não existir
+            credit = CompanyCredit(
+                company_id=company.id,
+                balance=100.0,
+                total_earned=0.0,
+                total_spent=0.0
+            )
+            db.add(credit)
+            db.commit()
+            db.refresh(credit)
+        
+        # Custo da promoção: 10 MT
+        promotion_cost = 10.0
+        
+        if credit.balance < promotion_cost:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Insufficient credits. Required: {promotion_cost} MT, Available: {credit.balance} MT"
+            )
+        
+        # Deduzir créditos
+        credit.balance -= promotion_cost
+        credit.total_spent += promotion_cost
+        
+        # Registrar transação
+        from ..models import CreditTransaction
+        transaction = CreditTransaction(
+            company_credit_id=credit.id,
+            type="spend",
+            amount=promotion_cost,
+            description=f"Promoção do serviço: {service.title}",
+            balance_before=credit.balance + promotion_cost,
+            balance_after=credit.balance
+        )
+        db.add(transaction)
+    
+    # Toggle do status de promoção
+    service.is_promoted = not service.is_promoted
+    
+    db.commit()
+    db.refresh(service)
+    
+    action = "promovido" if service.is_promoted else "despromovido"
+    return service
+
+@router.patch("/{service_id}/promote/{promote_status}", response_model=ServiceOut)
+async def set_service_promotion(
+    service_id: int,
+    promote_status: bool,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Define explicitamente o status de promoção de um serviço"""
+    service = db.get(Service, service_id)
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+    
+    # Verificar se o usuário é dono da empresa
+    company = db.get(Company, service.company_id)
+    if not company or company.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not allowed")
+    
+    # Definir status de promoção
+    service.is_promoted = promote_status
+    
+    db.commit()
+    db.refresh(service)
+    
+    action = "promovido" if service.is_promoted else "despromovido"
+    return service

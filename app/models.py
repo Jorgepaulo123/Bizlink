@@ -1,3 +1,4 @@
+
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float, Text, DateTime, ARRAY
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from .database import Base
@@ -36,6 +37,35 @@ class Company(Base):
     owner: Mapped[User] = relationship("User", back_populates="companies")
     services: Mapped[list["Service"]] = relationship("Service", back_populates="company", cascade="all, delete-orphan")
     portfolios: Mapped[list["CompanyPortfolio"]] = relationship("CompanyPortfolio", back_populates="company", cascade="all, delete-orphan")
+    credit: Mapped["CompanyCredit"] = relationship("CompanyCredit", back_populates="company", uselist=False, cascade="all, delete-orphan")
+
+class CompanyCredit(Base):
+    __tablename__ = "company_credits"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    company_id: Mapped[int] = mapped_column(Integer, ForeignKey("companies.id"), unique=True, index=True)
+    balance: Mapped[float] = mapped_column(Float, default=100.0)  # 100 MT inicial
+    total_earned: Mapped[float] = mapped_column(Float, default=0.0)  # Total ganho
+    total_spent: Mapped[float] = mapped_column(Float, default=0.0)  # Total gasto
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    company: Mapped[Company] = relationship("Company", back_populates="credit")
+    transactions: Mapped[list["CreditTransaction"]] = relationship("CreditTransaction", back_populates="company_credit", cascade="all, delete-orphan")
+
+class CreditTransaction(Base):
+    __tablename__ = "credit_transactions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    company_credit_id: Mapped[int] = mapped_column(Integer, ForeignKey("company_credits.id"), index=True)
+    type: Mapped[str] = mapped_column(String(20), nullable=False)  # 'earn', 'spend', 'bonus', 'deduction'
+    amount: Mapped[float] = mapped_column(Float, nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    balance_before: Mapped[float] = mapped_column(Float, nullable=False)
+    balance_after: Mapped[float] = mapped_column(Float, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    company_credit: Mapped[CompanyCredit] = relationship("CompanyCredit", back_populates="transactions")
 
 class CompanyPortfolio(Base):
     __tablename__ = "company_portfolios"
