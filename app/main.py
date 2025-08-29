@@ -18,11 +18,16 @@ except Exception:
 app = FastAPI(title="BizLinkApi", version="0.1.0")
 
 # CORS
+origins = [
+    "https://bizlink-mz.vercel.app",  # produção Vercel
+    "http://localhost:3000",          # desenvolvimento local (opcional)
+    # Adicione outros frontends autorizados aqui
+]
 # Accept all origins (no credentials when using wildcard)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=False,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
