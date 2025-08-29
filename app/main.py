@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from .database import Base, engine
 from .routers import auth as auth_router
 from .routers import users as users_router
@@ -17,21 +18,17 @@ except Exception:
 
 app = FastAPI(title="BizLinkApi", version="0.1.0")
 
-# CORS
-origins = [
-    "https://bizlink-mz.vercel.app",  # produção Vercel
-    "http://localhost:3000",          # desenvolvimento local (opcional)
-    # Adicione outros frontends autorizados aqui
-]
-# Accept all origins (no credentials when using wildcard)
+# CORS wildcard with credentials (as requested)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"],
 )
+
+# GZip compression
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # Routers
 app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
@@ -52,5 +49,4 @@ def read_root():
 
 if __name__ == "__main__":
     import uvicorn
-    # Use import string to support reload when running as script inside the app folder
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
