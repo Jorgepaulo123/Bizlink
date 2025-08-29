@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from typing import Optional
 import os
@@ -79,6 +80,40 @@ async def create_service(
 async def list_services_by_company(company_id: int, db: Session = Depends(get_db)):
     """Busca todos os serviços de uma empresa específica"""
     return db.query(Service).filter(Service.company_id == company_id).all()
+
+@router.get("/", response_model=list[ServiceOut])
+async def list_all_services(
+    page: int = 1,
+    limit: int = 10,
+    db: Session = Depends(get_db)
+):
+    """Lista todos os serviços com paginação e ordenação aleatória"""
+    # Validar parâmetros de paginação
+    if page < 1:
+        page = 1
+    if limit < 1 or limit > 100:
+        limit = 10
+    
+    # Calcular offset
+    offset = (page - 1) * limit
+    
+    # Buscar serviços com paginação e ordenação aleatória
+    services = db.query(Service)\
+        .order_by(text("RANDOM()"))\
+        .offset(offset)\
+        .limit(limit)\
+        .all()
+    
+    return services
+
+@router.get("/info", response_model=dict)
+async def get_services_info(db: Session = Depends(get_db)):
+    """Retorna informações sobre os serviços (total, etc.)"""
+    total_services = db.query(Service).count()
+    return {
+        "total_services": total_services,
+        "message": "Use /services?page=1&limit=10 para listar serviços com paginação"
+    }
 
 @router.get("/{service_id}", response_model=ServiceOut)
 async def get_service(service_id: int, db: Session = Depends(get_db)):
