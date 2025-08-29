@@ -72,16 +72,33 @@ class CompanyOut(CompanyBase):
 
 # Services
 class ServiceBase(BaseModel):
-    name: str
-    price: Optional[float] = None
+    title: str
     description: Optional[str] = None
+    price: Optional[str] = None
+    category: Optional[str] = None
+    tags: Optional[str] = None  # JSON or comma-separated string
+    status: Optional[str] = "Ativo"
+    is_promoted: Optional[bool] = False
 
 class ServiceCreate(ServiceBase):
     company_id: int
 
+class ServiceUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[str] = None
+    category: Optional[str] = None
+    tags: Optional[str] = None
+    status: Optional[str] = None
+    is_promoted: Optional[bool] = None
+
 class ServiceOut(ServiceBase):
     id: int
     company_id: int
+    image_url: Optional[str] = None
+    views: int
+    leads: int
+    likes: int
 
     class Config:
         from_attributes = True

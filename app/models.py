@@ -55,8 +55,18 @@ class Service(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     company_id: Mapped[int] = mapped_column(Integer, ForeignKey("companies.id"), index=True)
-    name: Mapped[str] = mapped_column(String(255), nullable=False)
-    price: Mapped[float | None] = mapped_column(Float, nullable=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    price: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    image_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    category: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    tags: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON string or comma-separated
+    status: Mapped[str] = mapped_column(String(20), default="Ativo")  # 'Ativo' | 'Pausado'
+    views: Mapped[int] = mapped_column(Integer, default=0)
+    leads: Mapped[int] = mapped_column(Integer, default=0)
+    likes: Mapped[int] = mapped_column(Integer, default=0)
+    is_promoted: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     company: Mapped[Company] = relationship("Company", back_populates="services")
