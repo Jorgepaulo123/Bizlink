@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float, Text, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float, Text, DateTime, ARRAY
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from .database import Base
 from datetime import datetime
@@ -57,10 +57,10 @@ class Service(Base):
     company_id: Mapped[int] = mapped_column(Integer, ForeignKey("companies.id"), index=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    price: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    price: Mapped[float | None] = mapped_column(Float, nullable=True)
     image_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
     category: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    tags: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON string or comma-separated
+    tags: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
     status: Mapped[str] = mapped_column(String(20), default="Ativo")  # 'Ativo' | 'Pausado'
     views: Mapped[int] = mapped_column(Integer, default=0)
     leads: Mapped[int] = mapped_column(Integer, default=0)

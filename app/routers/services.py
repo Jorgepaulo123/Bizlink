@@ -31,9 +31,9 @@ async def create_service(
     company_id: int = Form(...),
     title: str = Form(...),
     description: Optional[str] = Form(None),
-    price: Optional[str] = Form(None),
+    price: Optional[float] = Form(None),
     category: Optional[str] = Form(None),
-    tags: Optional[str] = Form(None),
+    tags: Optional[str] = Form(None),  # Will be converted to list[str]
     status: Optional[str] = Form("Ativo"),
     is_promoted: Optional[bool] = Form(False),
     image: UploadFile = File(None),
@@ -46,13 +46,18 @@ async def create_service(
     if company.owner_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not allowed")
 
+    # Convert tags string to list if provided
+    tags_list = None
+    if tags:
+        tags_list = [tag.strip() for tag in tags.split(',') if tag.strip()]
+    
     service = Service(
         company_id=company_id,
         title=title,
         description=description,
         price=price,
         category=category,
-        tags=tags,
+        tags=tags_list,
         status=status or "Ativo",
         is_promoted=bool(is_promoted),
     )
@@ -86,9 +91,9 @@ async def update_service(
     service_id: int,
     title: Optional[str] = Form(None),
     description: Optional[str] = Form(None),
-    price: Optional[str] = Form(None),
+    price: Optional[float] = Form(None),
     category: Optional[str] = Form(None),
-    tags: Optional[str] = Form(None),
+    tags: Optional[str] = Form(None),  # Will be converted to list[str]
     status: Optional[str] = Form(None),
     is_promoted: Optional[bool] = Form(None),
     image: UploadFile = File(None),
@@ -111,7 +116,11 @@ async def update_service(
     if category is not None:
         service.category = category
     if tags is not None:
-        service.tags = tags
+        # Convert tags string to list if provided
+        tags_list = None
+        if tags:
+            tags_list = [tag.strip() for tag in tags.split(',') if tag.strip()]
+        service.tags = tags_list
     if status is not None:
         service.status = status
     if is_promoted is not None:

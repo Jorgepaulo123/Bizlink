@@ -74,9 +74,9 @@ class CompanyOut(CompanyBase):
 class ServiceBase(BaseModel):
     title: str
     description: Optional[str] = None
-    price: Optional[str] = None
+    price: Optional[float] = None
     category: Optional[str] = None
-    tags: Optional[str] = None  # JSON or comma-separated string
+    tags: Optional[list[str]] = None
     status: Optional[str] = "Ativo"
     is_promoted: Optional[bool] = False
 
@@ -86,9 +86,9 @@ class ServiceCreate(ServiceBase):
 class ServiceUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
-    price: Optional[str] = None
+    price: Optional[float] = None
     category: Optional[str] = None
-    tags: Optional[str] = None
+    tags: Optional[list[str]] = None
     status: Optional[str] = None
     is_promoted: Optional[bool] = None
 

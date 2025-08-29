@@ -24,11 +24,11 @@ SQL = {
     "add_missing_columns": text(
         """
         ALTER TABLE services ADD COLUMN IF NOT EXISTS description text;
-        ALTER TABLE services ADD COLUMN IF NOT EXISTS price text;
+        ALTER TABLE services ADD COLUMN IF NOT EXISTS price double precision;
         ALTER TABLE services ADD COLUMN IF NOT EXISTS image_url text;
         ALTER TABLE services ADD COLUMN IF NOT EXISTS category text;
-        ALTER TABLE services ADD COLUMN IF NOT EXISTS tags text;
-        ALTER TABLE services ADD COLUMN IF NOT EXISTS status text DEFAULT 'Ativo' NOT NULL;
+        ALTER TABLE services ADD COLUMN IF NOT EXISTS tags text[];
+        ALTER TABLE services ADD COLUMN IF NOT EXISTS status varchar(20) DEFAULT 'Ativo' NOT NULL;
         ALTER TABLE services ADD COLUMN IF NOT EXISTS views integer DEFAULT 0 NOT NULL;
         ALTER TABLE services ADD COLUMN IF NOT EXISTS leads integer DEFAULT 0 NOT NULL;
         ALTER TABLE services ADD COLUMN IF NOT EXISTS likes integer DEFAULT 0 NOT NULL;
