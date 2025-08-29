@@ -75,16 +75,18 @@ async def create_service(
 
     return service
 
+@router.get("/company/{company_id}", response_model=list[ServiceOut])
+async def list_services_by_company(company_id: int, db: Session = Depends(get_db)):
+    """Busca todos os serviços de uma empresa específica"""
+    return db.query(Service).filter(Service.company_id == company_id).all()
+
 @router.get("/{service_id}", response_model=ServiceOut)
 async def get_service(service_id: int, db: Session = Depends(get_db)):
+    """Busca um serviço específico por ID"""
     service = db.get(Service, service_id)
     if not service:
         raise HTTPException(status_code=404, detail="Service not found")
     return service
-
-@router.get("/company/{company_id}", response_model=list[ServiceOut])
-async def list_services_by_company(company_id: int, db: Session = Depends(get_db)):
-    return db.query(Service).filter(Service.company_id == company_id).all()
 
 @router.put("/{service_id}", response_model=ServiceOut)
 async def update_service(
