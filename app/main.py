@@ -21,7 +21,7 @@ app = FastAPI(title="BizLinkApi", version="0.1.0")
 # CORS wildcard with credentials (as requested)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://bizlink-mz.vercel.app"],  # domínio do teu front
+    allow_origins=["https://bizlink-mz.vercel.app", "https://lovable.dev"],  # domínio do teu frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
