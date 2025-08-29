@@ -18,16 +18,11 @@ except Exception:
 app = FastAPI(title="BizLinkApi", version="0.1.0")
 
 # CORS
-# Read from settings.CORS_ORIGINS (comma-separated). If '*' is present, ignore it when credentials are enabled.
-_origins = [o.strip() for o in settings.CORS_ORIGINS.split(",")] if getattr(settings, "CORS_ORIGINS", None) else []
-_origins = [o for o in _origins if o and o != "*"]
-if not _origins:
-    # Fallback sensible defaults for dev
-    _origins = ["http://localhost:5173", "http://localhost:8080"]
+# Accept all origins (no credentials when using wildcard)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_origins,  # Configured via settings.CORS_ORIGINS
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
