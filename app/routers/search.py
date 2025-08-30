@@ -1,9 +1,7 @@
-from fastapi import APIRouter, Depends, Query as FastAPIQuery
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import or_, and_, text
-import sqlalchemy as sa
-from typing import Optional, List
-import re
+from sqlalchemy import or_, and_
+from typing import Optional
 
 from ..database import get_db
 from ..models import Service, Company, User, CompanyPortfolio
@@ -147,9 +145,9 @@ async def get_feed(
 
 @router.get("/", response_model=dict)
 async def global_search(
-    q: str = FastAPIQuery(..., description="Termo de pesquisa"),
+    q: str = Query(..., description="Termo de pesquisa"),
     db: Session = Depends(get_db),
-    limit: int = FastAPIQuery(20, ge=1, le=100, description="Limite de resultados por categoria")
+    limit: int = Query(20, ge=1, le=100, description="Limite de resultados por categoria")
 ):
     """
     Pesquisa global em serviços, empresas, usuários e portfólios
@@ -308,14 +306,14 @@ async def global_search(
 
 @router.get("/advanced", response_model=dict)
 async def advanced_search(
-    q: str = FastAPIQuery(..., description="Termo de pesquisa"),
-    category: Optional[str] = FastAPIQuery(None, description="Filtrar por categoria"),
-    location: Optional[str] = FastAPIQuery(None, description="Filtrar por localização (província/distrito)"),
-    tags: Optional[str] = FastAPIQuery(None, description="Filtrar por tags (separadas por vírgula)"),
-    min_price: Optional[float] = FastAPIQuery(None, description="Preço mínimo"),
-    max_price: Optional[float] = FastAPIQuery(None, description="Preço máximo"),
+    q: str = Query(..., description="Termo de pesquisa"),
+    category: Optional[str] = Query(None, description="Filtrar por categoria"),
+    location: Optional[str] = Query(None, description="Filtrar por localização (província/distrito)"),
+    tags: Optional[str] = Query(None, description="Filtrar por tags (separadas por vírgula)"),
+    min_price: Optional[float] = Query(None, description="Preço mínimo"),
+    max_price: Optional[float] = Query(None, description="Preço máximo"),
     db: Session = Depends(get_db),
-    limit: int = FastAPIQuery(20, ge=1, le=100, description="Limite de resultados por categoria")
+    limit: int = Query(20, ge=1, le=100, description="Limite de resultados por categoria")
 ):
     """
     Pesquisa avançada com filtros específicos
@@ -345,12 +343,6 @@ async def advanced_search(
         
         if category:
             service_filters.append(Service.category.ilike(f"%{category}%"))
-        
-        # Tags search temporarily disabled due to type issues
-        # if tags:
-        #     tag_list = [tag.strip().lower() for tag in tags.split(',') if tag.strip()]
-        #     for tag in tag_list:
-        #         service_filters.append(sa.func.coalesce(Service.tags, sa.cast('{}', sa.ARRAY(sa.String))).any(tag))
         
         if min_price is not None:
             service_filters.append(Service.price >= min_price)

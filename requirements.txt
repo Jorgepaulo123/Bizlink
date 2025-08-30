@@ -13,3 +13,6 @@ python-dotenv==1.0.0
 # QR Code generation dependencies
 qrcode[pil]==7.4.2
 Pillow==10.4.0
+
+# Additional dependencies for search functionality
+# (These should already be included in the above packages)
