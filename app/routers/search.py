@@ -7,7 +7,6 @@ import re
 
 from ..database import get_db
 from ..models import Service, Company, User, CompanyPortfolio
-from ..schemas import ServiceOut, CompanyOut, UserOut
 
 router = APIRouter()
 
@@ -29,25 +28,25 @@ async def get_feed(
         
         # Buscar serviços ativos
         services_query = db.query(Service).filter(Service.status == "Ativo")
-        if last_id:
+        if last_id is not None:
             services_query = services_query.filter(Service.id < last_id)
         services = services_query.order_by(Service.id.desc()).limit(limit).all()
         
         # Buscar empresas
         companies_query = db.query(Company)
-        if last_id:
+        if last_id is not None:
             companies_query = companies_query.filter(Company.id < last_id)
         companies = companies_query.order_by(Company.id.desc()).limit(limit).all()
         
         # Buscar usuários ativos
         users_query = db.query(User).filter(User.is_active == True)
-        if last_id:
+        if last_id is not None:
             users_query = users_query.filter(User.id < last_id)
         users = users_query.order_by(User.id.desc()).limit(limit).all()
         
         # Buscar portfólios
         portfolios_query = db.query(CompanyPortfolio)
-        if last_id:
+        if last_id is not None:
             portfolios_query = portfolios_query.filter(CompanyPortfolio.id < last_id)
         portfolios = portfolios_query.order_by(CompanyPortfolio.id.desc()).limit(limit).all()
         
