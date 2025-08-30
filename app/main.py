@@ -68,6 +68,3 @@ async def startup_event():
         print(f"⚠️ Database connection failed: {e}")
         # Don't fail the app startup, just log the warning
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
