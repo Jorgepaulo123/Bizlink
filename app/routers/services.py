@@ -115,6 +115,16 @@ async def get_services_info(db: Session = Depends(get_db)):
         "message": "Use /services?page=1&limit=10 para listar serviços com paginação"
     }
 
+@router.get("/latest", response_model=list[ServiceOut])
+async def get_latest_services(db: Session = Depends(get_db)):
+    """Retorna os 3 serviços mais recentes"""
+    latest_services = db.query(Service)\
+        .order_by(Service.created_at.desc())\
+        .limit(3)\
+        .all()
+    
+    return latest_services
+
 @router.get("/{service_id}", response_model=ServiceOut)
 async def get_service(service_id: int, db: Session = Depends(get_db)):
     """Busca um serviço específico por ID"""

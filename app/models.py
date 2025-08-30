@@ -12,6 +12,10 @@ class User(Base):
     full_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    # Novos campos opcionais
+    profile_photo_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    cover_photo_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    gender: Mapped[str | None] = mapped_column(String(20), nullable=True)  # 'Masculino', 'Feminino', 'Outro'
 
     companies: Mapped[list["Company"]] = relationship("Company", back_populates="owner")
 

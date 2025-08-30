@@ -1,45 +1,50 @@
-# BizLinkApi
+# 📱 BizLink
 
-FastAPI backend for BizLink. Provides JWT auth, users, companies, and services endpoints.
+**BizLink** é uma aplicação voltada para conectar pessoas, empresas e serviços em um único espaço.  
+O objetivo é criar uma **rede profissional simples**, um **marketplace de serviços**, uma **ferramenta de networking empresarial** e uma **plataforma de parcerias**.  
 
-## Features
-- FastAPI + Pydantic
-- SQLAlchemy ORM (SQLite by default)
-- JWT auth (login/register)
-- Users, Companies, Services CRUD
-- CORS enabled for Vite (http://localhost:5173)
+---
 
-## Quickstart
+## 🚀 Funcionalidades Principais
 
-1) Create and activate a virtual environment
+### 🔗 1. Rede Profissional
+- Perfis de usuários com habilidades, experiências e portfólio.  
+- Empresas podem postar vagas de emprego.  
+- Chat integrado para networking entre profissionais e empresas.  
 
-```
-python -m venv .venv
-# Windows PowerShell
-. .venv/Scripts/Activate.ps1
-```
+### 🛒 2. Marketplace de Serviços
+- Freelancers e pequenas empresas podem anunciar serviços (design, manutenção, transporte, etc.).  
+- Clientes podem contratar serviços diretamente pelo app.  
+- Sistema de avaliações para aumentar a confiança.  
+- Suporte a pagamentos móveis (M-Pesa, e-Mola, etc.).  
 
-2) Install dependencies
+### 📊 3. Networking Empresarial
+- Cadastro de empresas com informações, contatos e localização.  
+- Busca por setor (ex.: farmácias, eletrónica, transporte).  
+- Feed de novidades e oportunidades de negócios.  
+- Eventos online (salas de reunião virtuais).  
 
-```
-pip install -r BizLinkApi/requirements.txt
-```
+### 🤝 4. Plataforma de Parcerias
+- Conexão entre empresas que procuram parceiros, fornecedores ou distribuidores.  
+- Matching automático baseado em interesses de negócio.  
+- Troca de leads e oportunidades confiáveis.  
 
-3) Run the API
+---
 
-```
-uvicorn app.main:app --reload --port 8000 --app-dir BizLinkApi
-```
+## 🎯 Objetivo
+O **BizLink** busca:
+- Criar oportunidades de **trabalho**.  
+- Ajudar empresas a **se conectarem com clientes e parceiros**.  
+- Tornar o mercado mais **acessível e digital** em Moçambique e na África.  
 
-API docs: http://localhost:8000/docs
+---
 
-## Environment
-Create `.env` (or copy from `.env.example`).
+## 📌 Próximos Passos
+- [ ] Definir público-alvo inicial (profissionais, empresas locais ou ambos).  
+- [ ] Criar protótipo de telas principais (perfil, marketplace, parcerias).  
+- [ ] Implementar versão MVP com **rede profissional + marketplace**.  
+- [ ] Adicionar networking empresarial e parcerias na versão seguinte.  
 
-```
-SECRET_KEY=change_me
-ACCESS_TOKEN_EXPIRE_MINUTES=60
-ALGORITHM=HS256
-DATABASE_URL=sqlite:///./bizlink.db
-CORS_ORIGINS=http://localhost:5173
-```
+---
+
+👨‍💻 Desenvolvido por **BlueSpark MZ**  

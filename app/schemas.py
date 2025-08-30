@@ -14,6 +14,9 @@ class TokenData(BaseModel):
 class UserBase(BaseModel):
     email: EmailStr
     full_name: Optional[str] = None
+    profile_photo_url: Optional[str] = None
+    cover_photo_url: Optional[str] = None
+    gender: Optional[str] = None
 
 class UserCreate(UserBase):
     password: str = Field(min_length=6)
@@ -21,6 +24,12 @@ class UserCreate(UserBase):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    profile_photo_url: Optional[str] = None
+    cover_photo_url: Optional[str] = None
+    gender: Optional[str] = None
 
 class UserOut(UserBase):
     id: int
