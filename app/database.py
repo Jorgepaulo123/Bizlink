@@ -15,16 +15,27 @@ def get_engine():
     if _engine is None:
         try:
             DATABASE_URL = settings.DATABASE_URL
-            # Force use of psycopg2 dialect
+            # Try psycopg2 first, then asyncpg as fallback
             if DATABASE_URL.startswith('postgresql://'):
-                DATABASE_URL = DATABASE_URL.replace('postgresql://', 'postgresql+psycopg2://')
-            
-            _engine = create_engine(DATABASE_URL)
-            print("✅ Database engine created successfully")
+                try:
+                    # Try psycopg2 first
+                    DATABASE_URL_psycopg2 = DATABASE_URL.replace('postgresql://', 'postgresql+psycopg2://')
+                    _engine = create_engine(DATABASE_URL_psycopg2)
+                    print("✅ Database engine created with psycopg2")
+                except Exception as e:
+                    print(f"⚠️ psycopg2 failed, trying asyncpg: {e}")
+                    # Fallback to asyncpg
+                    DATABASE_URL_asyncpg = DATABASE_URL.replace('postgresql://', 'postgresql+asyncpg://')
+                    _engine = create_engine(DATABASE_URL_asyncpg)
+                    print("✅ Database engine created with asyncpg")
+            else:
+                _engine = create_engine(DATABASE_URL)
+                print("✅ Database engine created successfully")
         except Exception as e:
             print(f"⚠️ Failed to create database engine: {e}")
             # Create a dummy engine that will fail gracefully
             _engine = create_engine("sqlite:///:memory:")
+            print("⚠️ Using SQLite fallback")
     
     return _engine
 
